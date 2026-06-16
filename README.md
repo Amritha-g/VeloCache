@@ -10,8 +10,29 @@ mvn clean test
 ```
 
 ### Launch VeloCache Server
+Run the default server (starts on port `6380` with LRU eviction and AOF enabled):
 ```bash
 mvn exec:java -Dexec.mainClass="com.velocache.VeloCacheServer"
+```
+
+Configure custom options via command-line arguments:
+```bash
+mvn exec:java -Dexec.mainClass="com.velocache.VeloCacheServer" -Dexec.args="-p 6380 -c 10000 -policy lru -aof data/velocache.aof"
+```
+* **Supported Arguments**:
+  - `-p <port>`: Port to bind the server (default: `6380`)
+  - `-c <capacity>`: Cache capacity (default: `10000`)
+  - `-policy <lru|lfu>`: Cache eviction strategy (default: `lru`)
+  - `-aof <path>`: Append-only file path (default: `data/velocache.aof`)
+
+### Connect and Test
+Verify the connection using `nc` (netcat) or `redis-cli`:
+```bash
+# Using netcat
+printf "PING\r\n" | nc 127.0.0.1 6380
+
+# Using redis-cli
+redis-cli -p 6380 PING
 ```
 
 ### Run Benchmarks
